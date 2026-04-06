@@ -4,21 +4,21 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-    HiOutlineHome,
-    HiOutlineChartBar,
-    HiOutlineCube,
     HiOutlineCog,
     HiOutlineLogout,
     HiOutlineChevronDoubleLeft,
     HiOutlineChevronDoubleRight,
-    HiOutlineTerminal,
     HiOutlineShieldCheck,
-    HiOutlineSparkles,
     HiX
 } from 'react-icons/hi'
+import { TbBrandGoogleAnalytics } from "react-icons/tb";
+import { TbPlugConnected } from "react-icons/tb";
+import { PiFolderSimplePlus } from "react-icons/pi";
+import { TbLayoutDashboard } from "react-icons/tb";
 import { useTheme } from 'next-themes'
 import { createAuthClient } from "better-auth/react"
 import { cn } from '@/lib/utils'
+import { Users } from 'lucide-react';
 
 const authClient = createAuthClient()
 
@@ -31,17 +31,15 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     const [isCollapsed, setIsCollapsed] = useState(false)
     const { theme, setTheme } = useTheme();
     const { data: session } = authClient.useSession();
-    // and use session.data where needed
     const pathname = usePathname()
 
     const navItems = [
-        { name: 'Home', href: '/', icon: HiOutlineHome },
-        { name: 'Dashboard', href: '/dashboard', icon: HiOutlineChartBar },
-        { name: 'API Keys', href: '/api-keys', icon: HiOutlineTerminal },
-        { name: 'Collections', href: '/collections', icon: HiOutlineCube },
-        { name: 'Tunnels', href: '/tunnels', icon: HiOutlineShieldCheck },
-        { name: 'Pricing', href: '/pricing', icon: HiOutlineSparkles },
-        { name: 'Settings', href: '/settings', icon: HiOutlineCog },
+        { name: 'Dashboard', href: '/dashboard', icon: TbLayoutDashboard },
+        { name: 'Add Project', href: '/add-project', icon: PiFolderSimplePlus },
+        { name: 'Users', href: '/users', icon: Users },
+        { name: 'Analytics', href: '/analytics', icon: TbBrandGoogleAnalytics },
+        { name: 'Integrations', href: '/integration', icon: TbPlugConnected },
+        { name: 'Account Settings', href: '/account-settings', icon: HiOutlineCog },
     ]
 
     const handleSignOut = async () => {

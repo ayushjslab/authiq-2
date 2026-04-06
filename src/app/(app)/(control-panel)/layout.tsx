@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from 'react'
-import Sidebar from '@/components/ui/shared/sidebar'
-import PanelNavbar from '@/components/ui/shared/panel-navbar'
+import Sidebar from '@/components/shared/sidebar'
+import PanelNavbar from '@/components/shared/panel-navbar'
 
 const PanelLayout = ({ children }: { children: React.ReactNode }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
