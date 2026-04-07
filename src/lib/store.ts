@@ -6,6 +6,10 @@ export interface Project {
     name: string;
     publicKey: string;
     secretKey?: string;
+    settings: {
+        allowedOrigins: string[];
+        redirectUrls: string[];
+    };
     createdAt?: string;
 }
 

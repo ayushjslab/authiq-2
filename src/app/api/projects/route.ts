@@ -59,3 +59,41 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
+
+export async function PATCH(req: Request) {
+    try {
+        await connectToDatabase();
+        const session = await auth.api.getSession({ headers: await headers() });
+
+        if (!session) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { projectId, name, allowedOrigins, redirectUrls, regenerateKeys } = await req.json();
+
+        if (!projectId) {
+            return NextResponse.json({ error: "Project ID is required" }, { status: 400 });
+        }
+
+        const project = await Project.findOne({ _id: projectId, ownerId: session.user.id });
+        if (!project) {
+            return NextResponse.json({ error: "Project not found or unauthorized" }, { status: 404 });
+        }
+
+        if (name) project.name = name;
+        if (allowedOrigins) project.settings.allowedOrigins = allowedOrigins;
+        if (redirectUrls) project.settings.redirectUrls = redirectUrls;
+
+        if (regenerateKeys) {
+            project.publicKey = `pk_${crypto.randomBytes(24).toString("hex")}`;
+            project.secretKey = `sk_${crypto.randomBytes(32).toString("hex")}`;
+        }
+
+        await project.save();
+
+        return NextResponse.json(project);
+    } catch (error) {
+        console.error("Error updating project:", error);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+}

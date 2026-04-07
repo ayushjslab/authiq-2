@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { HiOutlinePlus } from "react-icons/hi";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export function AddProjectDialog({ onProjectCreated }: { onProjectCreated?: () => void }) {
     const [name, setName] = useState("");
@@ -41,7 +42,7 @@ export function AddProjectDialog({ onProjectCreated }: { onProjectCreated?: () =
             if (onProjectCreated) onProjectCreated();
         },
         onError: (error: any) => {
-            alert(error.message || "An error occurred. Please try again.");
+            toast.error(error.message || "An error occurred. Please try again.");
         }
     });
 

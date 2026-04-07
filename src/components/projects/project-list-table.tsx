@@ -11,13 +11,7 @@ import {
 } from "@/components/ui/table";
 import { HiOutlineKey, HiOutlineCalendar, HiOutlineExternalLink, HiOutlineClipboardCopy, HiOutlineCheck } from "react-icons/hi";
 
-interface Project {
-    _id: string;
-    name: string;
-    publicKey: string;
-    secretKey?: string;
-    createdAt?: string;
-}
+import { useProjectStore, Project } from "@/lib/store";
 
 const CopyButton = ({ value, label }: { value?: string; label: string }) => {
     const [copied, setCopied] = useState(false);

@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
@@ -48,6 +49,7 @@ export default function RootLayout({
         >
           <QueryProvider>
             {children}
+             <Toaster />
           </QueryProvider>
         </ThemeProvider>
       </body>

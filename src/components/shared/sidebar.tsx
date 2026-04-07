@@ -13,13 +13,13 @@ import {
 } from 'react-icons/hi'
 import { TbBrandGoogleAnalytics } from "react-icons/tb";
 import { TbPlugConnected } from "react-icons/tb";
-import { PiFolderSimplePlus } from "react-icons/pi";
+import { PiFolderSimplePlus, PiFolderSimpleStarBold } from "react-icons/pi";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { useTheme } from 'next-themes'
 import { createAuthClient } from "better-auth/react"
 import { cn } from '@/lib/utils'
 import { Users } from 'lucide-react';
-
+import { RiFolderSettingsLine } from "react-icons/ri";
 const authClient = createAuthClient()
 
 interface SidebarProps {
@@ -36,6 +36,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     const navItems = [
         { name: 'Dashboard', href: '/dashboard', icon: TbLayoutDashboard },
         { name: 'Add Project', href: '/add-project', icon: PiFolderSimplePlus },
+        { name: 'Project Settings', href: '/project-settings', icon: RiFolderSettingsLine },
         { name: 'Users', href: '/users', icon: Users },
         { name: 'Analytics', href: '/analytics', icon: TbBrandGoogleAnalytics },
         { name: 'Integrations', href: '/integration', icon: TbPlugConnected },
