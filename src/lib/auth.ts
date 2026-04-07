@@ -1,9 +1,22 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { MongoClient } from "mongodb";
+import { connectToDatabase } from "./db";
 
-const client = new MongoClient(process.env.MONGODB_URI!);
-const db = client.db();
+// We'll use the Mongoose connection to avoid multiple connection pools 
+// and potential "Topology is closed" errors.
+const getDb = async () => {
+    const mongoose = await connectToDatabase();
+    return mongoose.connection.db;
+};
+
+// Next.js with Better Auth works best when the database is initialized lazily or 
+// when the connection is waited for. We use top-level await here which is 
+// supported in Next.js Server Components and API routes.
+const db = await getDb();
+
+if (!db) {
+    throw new Error("Failed to initialize MongoDB database for Better Auth");
+}
 
 export const auth = betterAuth({
     database: mongodbAdapter(db),

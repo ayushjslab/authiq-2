@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     HiOutlineBell,
     HiOutlineMoon,
@@ -14,6 +14,9 @@ import {
 import { useTheme } from 'next-themes'
 import { createAuthClient } from "better-auth/react"
 import { cn } from '@/lib/utils'
+import { useProjectStore, Project } from '@/lib/store'
+import Link from 'next/link'
+import { useQuery } from '@tanstack/react-query'
 
 const authClient = createAuthClient()
 
@@ -24,18 +27,40 @@ interface PanelNavbarProps {
 const PanelNavbar = ({ onMenuClick }: PanelNavbarProps) => {
     const { theme, setTheme } = useTheme();
     const { data: session } = authClient.useSession();
-    const [selectedProject, setSelectedProject] = useState("Project Authiq");
+    const { selectedProject, setSelectedProject } = useProjectStore();
     const [mounted, setMounted] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     // Avoid hydration mismatch
-    React.useEffect(() => {
+    useEffect(() => {
         setMounted(true);
     }, []);
+
+    const { data: projects = [], isLoading } = useQuery<Project[]>({
+        queryKey: ['projects'],
+        queryFn: async () => {
+            const res = await fetch("/api/projects");
+            if (!res.ok) throw new Error("Failed to fetch projects");
+            return res.json();
+        },
+        enabled: !!session,
+    });
+
+    // Auto-select first project if none selected
+    useEffect(() => {
+        if (mounted && projects && projects.length > 0 && !selectedProject) {
+            setSelectedProject(projects[0]);
+        }
+    }, [projects, selectedProject, mounted, setSelectedProject]);
 
     const handleSignOut = async () => {
         await authClient.signOut();
         window.location.href = "/signin";
     }
+
+    if (!mounted) return (
+        <header className="h-16 border-b border-sidebar-border bg-sidebar/80 backdrop-blur-md sticky top-0 z-30 px-4 flex items-center justify-between" />
+    );
 
     return (
         <header className="h-16 border-b border-sidebar-border bg-sidebar/80 backdrop-blur-md sticky top-0 z-30 px-4 flex items-center justify-between">
@@ -50,31 +75,68 @@ const PanelNavbar = ({ onMenuClick }: PanelNavbarProps) => {
                 </button>
 
                 {/* Project Selector */}
-                <div className="relative group">
-                    <button className="flex items-center space-x-2 px-3 py-1.5 rounded-lg border border-sidebar-border hover:bg-sidebar-accent transition-all duration-200 bg-sidebar/50">
+                <div
+                    className="relative"
+                    onMouseEnter={() => setIsDropdownOpen(true)}
+                    onMouseLeave={() => setIsDropdownOpen(false)}
+                >
+                    <button
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        className="flex items-center space-x-2 px-3 py-1.5 rounded-lg border border-sidebar-border hover:bg-sidebar-accent transition-all duration-200 bg-sidebar/50 cursor-pointer outline-none focus:ring-2 focus:ring-primary/20"
+                    >
                         <div className="w-5 h-5 rounded bg-primary/20 flex items-center justify-center">
                             <div className="w-2 h-2 rounded-full bg-primary" />
                         </div>
                         <span className="text-sm font-medium text-sidebar-foreground truncate max-w-[120px] md:max-w-[200px]">
-                            {selectedProject}
+                            {selectedProject?.name || "Select Project"}
                         </span>
                         <HiOutlineSelector size={14} className="text-sidebar-foreground/40" />
                     </button>
 
-                    {/* Dropdown Placeholder */}
-                    <div className="absolute top-full left-0 mt-2 w-56 bg-sidebar border border-sidebar-border rounded-xl shadow-xl opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 z-50 p-1">
+                    {/* Dropdown */}
+                    <div className={cn(
+                        "absolute top-full left-0 mt-2 w-64 bg-sidebar border border-sidebar-border rounded-xl shadow-xl transition-all duration-200 z-50 p-1",
+                        isDropdownOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-2 pointer-events-none"
+                    )}>
                         <div className="px-3 py-2 text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-wider">Select Project</div>
-                        <button className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-sidebar-accent text-sidebar-foreground transition-colors flex items-center justify-between">
-                            Project Authiq
-                            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                        </button>
-                        <button className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-sidebar-accent text-sidebar-foreground/60 transition-colors">
-                            Personal API
-                        </button>
+
+                        <div className="max-h-60 overflow-y-auto custom-scrollbar">
+                            {isLoading ? (
+                                <div className="px-3 py-2 text-xs text-muted-foreground">Loading...</div>
+                            ) : projects && projects.length > 0 ? (
+                                projects.map((project) => (
+                                    <button
+                                        key={project._id}
+                                        onClick={() => {
+                                            setSelectedProject(project);
+                                            setIsDropdownOpen(false);
+                                        }}
+                                        className={cn(
+                                            "w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center justify-between group/item cursor-pointer",
+                                            selectedProject?._id === project._id
+                                                ? "bg-primary/10 text-primary font-semibold"
+                                                : "hover:bg-sidebar-accent text-sidebar-foreground/70 hover:text-sidebar-foreground"
+                                        )}
+                                    >
+                                        <span className="truncate">{project.name}</span>
+                                        {selectedProject?._id === project._id && (
+                                            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                        )}
+                                    </button>
+                                ))
+                            ) : (
+                                <div className="px-3 py-2 text-xs text-muted-foreground italic">No projects found</div>
+                            )}
+                        </div>
+
                         <div className="h-px bg-sidebar-border my-1" />
-                        <button className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-primary/10 text-primary transition-colors font-medium">
+                        <Link
+                            href="/add-project"
+                            onClick={() => setIsDropdownOpen(false)}
+                            className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-primary/10 text-primary transition-colors font-medium flex items-center"
+                        >
                             + Create New Project
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
     HiOutlineCog,
     HiOutlineLogout,
@@ -29,9 +29,9 @@ interface SidebarProps {
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     const [isCollapsed, setIsCollapsed] = useState(false)
-    const { theme, setTheme } = useTheme();
     const { data: session } = authClient.useSession();
     const pathname = usePathname()
+    const router = useRouter();
 
     const navItems = [
         { name: 'Dashboard', href: '/dashboard', icon: TbLayoutDashboard },
@@ -111,7 +111,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                         <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground shadow-md">
                             <HiOutlineShieldCheck size={20} />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-foreground">
+                        <span onClick={() => router.push("/")} className="text-xl font-bold cursor-pointer tracking-tight text-foreground">
                             Authiq
                         </span>
                     </div>
@@ -186,7 +186,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                         <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground shadow-md">
                             <HiOutlineShieldCheck size={20} />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-foreground">
+                        <span onClick={() => router.push("/")} className="text-xl cursor-pointer font-bold tracking-tight text-foreground">
                             Authiq
                         </span>
                     </div>

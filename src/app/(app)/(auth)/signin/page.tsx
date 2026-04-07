@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react'
-import { createAuthClient } from "better-auth/client"
+import { createAuthClient } from "better-auth/react"
 import { FcGoogle } from "react-icons/fc"
 import { HiOutlineShieldCheck } from "react-icons/hi"
 
@@ -49,7 +49,7 @@ const SignInPage = () => {
                     </div>
 
                     <p className="text-center text-xs text-muted-foreground px-8 leading-relaxed">
-                        By continuing, you agree to our <span className="underline underline-offset-4 hover:text-primary cursor-pointer transition-colors hover:text-primary/80">Terms of Service</span> and <span className="underline underline-offset-4 hover:text-primary cursor-pointer transition-colors hover:text-primary/80">Privacy Policy</span>.
+                        By continuing, you agree to our <span className="underline underline-offset-4 hover:text-primary cursor-pointer transition-colors">Terms of Service</span> and <span className="underline underline-offset-4 hover:text-primary cursor-pointer transition-colors">Privacy Policy</span>.
                     </p>
                 </div>
             </div>
