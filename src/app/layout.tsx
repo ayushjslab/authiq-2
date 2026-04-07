@@ -20,6 +20,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Authiq",
   description: "Modern API Monitoring & Tunneling",
+  icons: {
+    icon: "/aq.png",
+  },
 };
 
 import { ThemeProvider } from "@/components/theme-provider";
@@ -49,7 +52,7 @@ export default function RootLayout({
         >
           <QueryProvider>
             {children}
-             <Toaster />
+            <Toaster />
           </QueryProvider>
         </ThemeProvider>
       </body>

@@ -20,6 +20,9 @@ import { createAuthClient } from "better-auth/react"
 import { cn } from '@/lib/utils'
 import { Users } from 'lucide-react';
 import { RiFolderSettingsLine } from "react-icons/ri";
+import { LuFolderCog } from "react-icons/lu";
+import { MdOutlineRuleFolder } from "react-icons/md";
+import Image from 'next/image';
 const authClient = createAuthClient()
 
 interface SidebarProps {
@@ -36,8 +39,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     const navItems = [
         { name: 'Dashboard', href: '/dashboard', icon: TbLayoutDashboard },
         { name: 'Add Project', href: '/add-project', icon: PiFolderSimplePlus },
-        { name: 'Project Settings', href: '/project-settings', icon: RiFolderSettingsLine },
-        { name: 'Manage Project', href: '/manage-project', icon: RiFolderSettingsLine },
+        { name: 'Project Settings', href: '/project-settings', icon: LuFolderCog },
+        { name: 'Manage Project', href: '/manage-project', icon: MdOutlineRuleFolder },
         { name: 'Users', href: '/users', icon: Users },
         { name: 'Analytics', href: '/analytics', icon: TbBrandGoogleAnalytics },
         { name: 'Integrations', href: '/integration', icon: TbPlugConnected },
@@ -107,25 +110,29 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             "hidden md:flex"
         )}>
             {/* Header */}
-            <div className="flex items-center justify-between p-4 h-20">
-                {!isCollapsed && (
-                    <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground shadow-md">
-                            <HiOutlineShieldCheck size={20} />
-                        </div>
-                        <span onClick={() => router.push("/")} className="text-xl font-bold cursor-pointer tracking-tight text-foreground">
+            <div className={cn(
+                "flex items-center p-4 h-20 transition-all duration-300",
+                isCollapsed ? "flex-col justify-center gap-2" : "justify-between"
+            )}>
+                {!isCollapsed && <Link href="/" className="flex items-center space-x-3 group outline-none">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center text-primary-foreground shadow-lg group-hover:shadow-primary/20 group-hover:scale-105 transition-all duration-200 border border-primary/20 relative overflow-hidden">
+
+                        <Image src="/aq.png" alt="Logo" width={35} height={35} className="object-contain relative z-10" />
+                    </div>
+                    {!isCollapsed && (
+                        <span className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">
                             Authiq
                         </span>
-                    </div>
-                )}
+                    )}
+                </Link>}
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
                     className={cn(
-                        "p-2 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 border border-transparent active:scale-95",
-                        isCollapsed ? "mx-auto" : "ml-auto"
+                        "p-1.5 rounded-lg hover:bg-sidebar-accent transition-all duration-200 border border-transparent active:scale-95 text-sidebar-foreground/50 hover:text-sidebar-foreground",
+                        isCollapsed ? "mt-2" : "ml-auto"
                     )}
                 >
-                    {isCollapsed ? <HiOutlineChevronDoubleRight size={20} /> : <HiOutlineChevronDoubleLeft size={20} />}
+                    {isCollapsed ? <HiOutlineChevronDoubleRight size={18} /> : <HiOutlineChevronDoubleLeft size={18} />}
                 </button>
             </div>
 
@@ -184,15 +191,15 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 <div className="flex items-center justify-between p-4 h-20 border-b border-sidebar-border">
-                    <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground shadow-md">
-                            <HiOutlineShieldCheck size={20} />
+                    <Link href="/" onClick={onClose} className="flex items-center space-x-3 group outline-none">
+                        <div className="w-9 h-9 rounded-xl bg-linear-to-br from-primary to-primary/60 flex items-center justify-center text-primary-foreground shadow-lg border border-primary/20">
+                            <Image src="/aq.png" alt="Logo" width={22} height={22} className="object-contain" />
                         </div>
-                        <span onClick={() => router.push("/")} className="text-xl cursor-pointer font-bold tracking-tight text-foreground">
+                        <span className="text-xl font-bold tracking-tight text-foreground transition-colors duration-300">
                             Authiq
                         </span>
-                    </div>
-                    <button onClick={onClose} className="p-2 rounded-lg hover:bg-sidebar-accent">
+                    </Link>
+                    <button onClick={onClose} className="p-2 rounded-lg hover:bg-sidebar-accent text-sidebar-foreground/50">
                         <HiX size={24} />
                     </button>
                 </div>

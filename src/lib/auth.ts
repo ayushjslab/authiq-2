@@ -52,5 +52,17 @@ export const auth = betterAuth({
             clientId: process.env.SLACK_CLIENT_ID!,
             clientSecret: process.env.SLACK_CLIENT_SECRET!,
         },
+        notion: {
+            clientId: process.env.NOTION_CLIENT_ID!,
+            clientSecret: process.env.NOTION_CLIENT_SECRET!,
+        },
+        linkedin: {
+            clientId: process.env.LINKEDIN_CLIENT_ID!,
+            clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
+        },
+        gitlab: {
+            clientId: process.env.GITLAB_CLIENT_ID!,
+            clientSecret: process.env.GITLAB_CLIENT_SECRET!,
+        },
     },
 });
