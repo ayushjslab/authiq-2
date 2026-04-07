@@ -1,25 +1,21 @@
 "use client";
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
-    HiOutlineCog,
     HiOutlineLogout,
     HiOutlineChevronDoubleLeft,
     HiOutlineChevronDoubleRight,
-    HiOutlineShieldCheck,
     HiX
 } from 'react-icons/hi'
 import { TbBrandGoogleAnalytics } from "react-icons/tb";
 import { TbPlugConnected } from "react-icons/tb";
 import { PiFolderSimplePlus, PiFolderSimpleStarBold } from "react-icons/pi";
 import { TbLayoutDashboard } from "react-icons/tb";
-import { useTheme } from 'next-themes'
 import { createAuthClient } from "better-auth/react"
 import { cn } from '@/lib/utils'
 import { Users } from 'lucide-react';
-import { RiFolderSettingsLine } from "react-icons/ri";
 import { LuFolderCog } from "react-icons/lu";
 import { MdOutlineRuleFolder } from "react-icons/md";
 import Image from 'next/image';
@@ -44,7 +40,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         { name: 'Users', href: '/users', icon: Users },
         { name: 'Analytics', href: '/analytics', icon: TbBrandGoogleAnalytics },
         { name: 'Integrations', href: '/integration', icon: TbPlugConnected },
-        { name: 'Account Settings', href: '/account-settings', icon: HiOutlineCog },
     ]
 
     const handleSignOut = async () => {
