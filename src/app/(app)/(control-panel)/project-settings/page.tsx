@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useProjectStore } from "@/lib/store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -29,7 +29,6 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { cn } from "@/lib/utils";
 
 export default function ProjectSettingsPage() {
     const { selectedProject, setSelectedProject } = useProjectStore();
@@ -85,7 +84,7 @@ export default function ProjectSettingsPage() {
 
     const addOrigin = () => {
         if (!newOrigin) return;
-        if (!newOrigin.startsWith("https://")) return toast.error("Origins must start with https://");
+        // if (!newOrigin.startsWith("https://")) return toast.error("Origins must start with https://");
         if (origins.includes(newOrigin)) return toast.error("Origin already exists");
 
         const updated = [...origins, newOrigin];
