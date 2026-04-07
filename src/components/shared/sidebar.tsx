@@ -37,6 +37,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         { name: 'Dashboard', href: '/dashboard', icon: TbLayoutDashboard },
         { name: 'Add Project', href: '/add-project', icon: PiFolderSimplePlus },
         { name: 'Project Settings', href: '/project-settings', icon: RiFolderSettingsLine },
+        { name: 'Manage Project', href: '/manage-project', icon: RiFolderSettingsLine },
         { name: 'Users', href: '/users', icon: Users },
         { name: 'Analytics', href: '/analytics', icon: TbBrandGoogleAnalytics },
         { name: 'Integrations', href: '/integration', icon: TbPlugConnected },

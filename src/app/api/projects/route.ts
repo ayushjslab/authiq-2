@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/db";
-import Project from "@/models/project";
+import Project, { PLAN_LIMITS, ALL_PROVIDERS, SocialProvider } from "@/models/project";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
@@ -47,9 +47,12 @@ export async function POST(req: Request) {
             ownerId: session.user.id,
             publicKey,
             secretKey,
+            plan: "free",
             settings: {
                 allowedOrigins: [],
                 redirectUrls: [],
+                enabledProviders: [],
+                maxUsers: 1000,
             },
         });
 
@@ -69,7 +72,7 @@ export async function PATCH(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { projectId, name, allowedOrigins, redirectUrls, regenerateKeys } = await req.json();
+        const { projectId, name, allowedOrigins, redirectUrls, enabledProviders, maxUsers, regenerateKeys } = await req.json();
 
         if (!projectId) {
             return NextResponse.json({ error: "Project ID is required" }, { status: 400 });
@@ -78,6 +81,34 @@ export async function PATCH(req: Request) {
         const project = await Project.findOne({ _id: projectId, ownerId: session.user.id });
         if (!project) {
             return NextResponse.json({ error: "Project not found or unauthorized" }, { status: 404 });
+        }
+
+        const limits = PLAN_LIMITS[project.plan];
+
+        // Validate enabled providers against plan limits
+        if (enabledProviders !== undefined) {
+            const validProviders = (enabledProviders as string[]).filter(p =>
+                ALL_PROVIDERS.includes(p as SocialProvider)
+            ) as SocialProvider[];
+
+            if (validProviders.length > limits.maxProviders) {
+                return NextResponse.json(
+                    { error: `Your ${project.plan} plan allows a maximum of ${limits.maxProviders} providers. Please upgrade to Pro.` },
+                    { status: 403 }
+                );
+            }
+            project.settings.enabledProviders = validProviders;
+        }
+
+        // Validate maxUsers against plan limits
+        if (maxUsers !== undefined) {
+            if (project.plan === "free" && maxUsers > limits.maxUsers) {
+                return NextResponse.json(
+                    { error: `Free plan is limited to ${limits.maxUsers} users/month. Please upgrade to Pro.` },
+                    { status: 403 }
+                );
+            }
+            project.settings.maxUsers = maxUsers;
         }
 
         if (name) project.name = name;
