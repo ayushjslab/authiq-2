@@ -80,10 +80,16 @@ export async function GET(req: Request) {
             lastLoginAt: { $gte: new Date(Date.now() - (project.settings.tokenExpiryTime || 24 * 60 * 60 * 1000)) }
         });
 
+        // 5. Recent Users for Dashboard
+        const recentUsers = await WebUser.find({ projectId: projectObjectId })
+            .sort({ createdAt: -1 })
+            .limit(5);
+
         return NextResponse.json({
             growth: growthData,
             providers: providerData,
             activity: activityTrend,
+            recentUsers,
             stats: {
                 totalUsers,
                 activeUsers,
