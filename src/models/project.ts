@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-export const ALL_PROVIDERS = ["google", "github", "facebook", "twitter", "discord", "microsoft", "slack"] as const;
+export const ALL_PROVIDERS = ["google", "github", "facebook", "twitter", "discord", "microsoft", "slack", ""] as const;
 export type SocialProvider = (typeof ALL_PROVIDERS)[number];
 
 export const PLANS = ["free", "pro"] as const;
@@ -22,6 +22,8 @@ export interface IProject extends Document {
         redirectUrls: string[];
         enabledProviders: SocialProvider[];
         maxUsers: number;
+        signinUsers: number;
+        tokenExpiryTime: number;
     };
     createdAt: Date;
     updatedAt: Date;
@@ -43,6 +45,8 @@ const ProjectSchema: Schema = new Schema(
                 default: [],
             },
             maxUsers: { type: Number, default: 1000 },
+            signinUsers: { type: Number, default: 0 },
+            tokenExpiryTime: { type: Number, default: 24 * 60 * 60 * 1000 },
         },
     },
     { timestamps: true }

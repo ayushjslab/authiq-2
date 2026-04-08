@@ -3,8 +3,10 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IWebUser extends Document {
     projectId: mongoose.Types.ObjectId; // Each user belongs to a specific Project
     email: string;
-    passwordHash: string;
+    name: string;
+    avatar: string;
     isEmailVerified: boolean;
+    provider: string;
     metadata: Record<string, any>;
     lastLoginAt?: Date;
     createdAt: Date;
@@ -19,13 +21,26 @@ const WebUserSchema: Schema = new Schema(
             required: true,
             index: true
         },
+        name: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        avatar: {
+            type: String,
+            trim: true
+        },
+        provider: {
+            type: String,
+            required: true,
+            trim: true
+        },
         email: {
             type: String,
             required: true,
             lowercase: true,
             trim: true
         },
-        passwordHash: { type: String, required: true },
         isEmailVerified: { type: Boolean, default: false },
         metadata: { type: Map, of: Schema.Types.Mixed, default: {} },
         lastLoginAt: { type: Date },

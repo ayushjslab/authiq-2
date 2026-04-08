@@ -36,6 +36,7 @@ export default function ProjectSettingsPage() {
 
     // Local state for form fields
     const [name, setName] = useState(selectedProject?.name || "");
+    const [tokenExpiry, setTokenExpiry] = useState(selectedProject?.settings?.tokenExpiryTime ? selectedProject.settings.tokenExpiryTime / (60 * 60 * 1000) : 24);
     const [origins, setOrigins] = useState<string[]>(selectedProject?.settings?.allowedOrigins || []);
     const [redirects, setRedirects] = useState<string[]>(selectedProject?.settings?.redirectUrls || []);
 
@@ -46,6 +47,7 @@ export default function ProjectSettingsPage() {
     useEffect(() => {
         if (selectedProject) {
             setName(selectedProject.name);
+            setTokenExpiry(selectedProject.settings?.tokenExpiryTime ? selectedProject.settings.tokenExpiryTime / (60 * 60 * 1000) : 24);
             setOrigins(selectedProject.settings?.allowedOrigins || []);
             setRedirects(selectedProject.settings?.redirectUrls || []);
         }
@@ -79,7 +81,11 @@ export default function ProjectSettingsPage() {
 
     const handleSaveGeneral = () => {
         if (!name.trim()) return toast.error("Project name is required");
-        mutation.mutate({ name });
+        if (tokenExpiry <= 0) return toast.error("Token expiry must be at least 1 hour");
+        mutation.mutate({
+            name,
+            tokenExpiryTime: tokenExpiry * 60 * 60 * 1000
+        });
     };
 
     const addOrigin = () => {
@@ -162,6 +168,25 @@ export default function ProjectSettingsPage() {
                             className="bg-sidebar-accent/30 border-sidebar-border focus:ring-primary/20 rounded-xl h-12"
                             placeholder="My Awesome App"
                         />
+                    </div>
+
+                    <div className="space-y-2">
+                        <div className="flex items-center justify-between ml-1">
+                            <Label htmlFor="tokenExpiry" className="font-bold text-foreground/70">Token Expiry Time</Label>
+                            <span className="text-[10px] font-black uppercase tracking-wider text-primary/60 bg-primary/5 px-2 py-0.5 rounded-full">Hours</span>
+                        </div>
+                        <Input
+                            id="tokenExpiry"
+                            type="number"
+                            value={tokenExpiry}
+                            onChange={(e) => setTokenExpiry(Number(e.target.value))}
+                            className="bg-sidebar-accent/30 border-sidebar-border focus:ring-primary/20 rounded-xl h-12"
+                            placeholder="24"
+                            min={1}
+                        />
+                        <p className="text-[10px] text-muted-foreground ml-1">
+                            Determines how long the authentication token remains valid for your users.
+                        </p>
                     </div>
                     <Button
                         onClick={handleSaveGeneral}

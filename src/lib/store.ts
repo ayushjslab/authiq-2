@@ -2,21 +2,21 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export const ALL_PROVIDERS = [
-  "google",
-  "facebook",
-  "github",
-  "twitter",
-  "linkedin",
-  "discord",
-  "reddit",
-  "spotify",
-  "twitch",
-  "yahoo",
-  "dropbox",
-  "slack",
-  "gitlab",
-  "stackoverflow",
-  "notion"
+    "google",
+    "facebook",
+    "github",
+    "twitter",
+    "linkedin",
+    "discord",
+    "reddit",
+    "spotify",
+    "twitch",
+    "yahoo",
+    "dropbox",
+    "slack",
+    "gitlab",
+    "stackoverflow",
+    "notion"
 ] as const;
 export type SocialProvider = (typeof ALL_PROVIDERS)[number];
 export type Plan = "free" | "pro";
@@ -32,6 +32,7 @@ export interface Project {
         redirectUrls: string[];
         enabledProviders: SocialProvider[];
         maxUsers: number;
+        tokenExpiryTime: number;
     };
     createdAt?: string;
 }

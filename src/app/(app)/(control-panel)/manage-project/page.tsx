@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useProjectStore, ALL_PROVIDERS, SocialProvider } from "@/lib/store";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useProjectStore, ALL_PROVIDERS, SocialProvider, Project } from "@/lib/store";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Users, Shield, Zap, Lock, Crown, Info, Check, Minus, Plus } from "lucide-react";
@@ -25,7 +25,6 @@ const PROVIDER_META: Record<SocialProvider, { label: string; logo: string; darkI
     notion: { label: "Notion", logo: "/notion.svg", darkInvert: true },
 };
 
-
 const FREE_PLAN_MAX_PROVIDERS = 3;
 const FREE_PLAN_MAX_USERS = 1000;
 
@@ -45,28 +44,41 @@ async function updateProjectSettings(data: {
 }
 
 export default function ManageProjectPage() {
-    const { selectedProject } = useProjectStore();
+    const { selectedProject, setSelectedProject } = useProjectStore();
     const queryClient = useQueryClient();
 
     const [enabledProviders, setEnabledProviders] = useState<SocialProvider[]>([]);
     const [maxUsers, setMaxUsers] = useState(1000);
     const [isDirty, setIsDirty] = useState(false);
 
-    const plan = selectedProject?.plan ?? "free";
+    // Fetch fresh project data from DB
+    const { data: projects } = useQuery<Project[]>({
+        queryKey: ["projects"],
+        queryFn: async () => {
+            const res = await fetch("/api/projects");
+            if (!res.ok) throw new Error("Failed to fetch projects");
+            return res.json();
+        }
+    });
+
+    const currentProject = projects?.find(p => p._id === selectedProject?._id) || selectedProject;
+
+    const plan = currentProject?.plan ?? "free";
     const isFree = plan === "free";
     const maxProviders = isFree ? FREE_PLAN_MAX_PROVIDERS : ALL_PROVIDERS.length;
 
     useEffect(() => {
-        if (selectedProject) {
-            setEnabledProviders(selectedProject.settings?.enabledProviders ?? []);
-            setMaxUsers(selectedProject.settings?.maxUsers ?? 1000);
+        if (currentProject) {
+            setEnabledProviders(currentProject.settings?.enabledProviders ?? []);
+            setMaxUsers(currentProject.settings?.maxUsers ?? 1000);
             setIsDirty(false);
         }
-    }, [selectedProject]);
+    }, [currentProject]);
 
     const { mutate: saveSettings, isPending } = useMutation({
         mutationFn: updateProjectSettings,
-        onSuccess: () => {
+        onSuccess: (data) => {
+            setSelectedProject(data);
             queryClient.invalidateQueries({ queryKey: ["projects"] });
             toast.success("Project settings saved!");
             setIsDirty(false);
@@ -261,7 +273,18 @@ export default function ManageProjectPage() {
             </section>
 
             {/* Save */}
-            <div className="flex justify-end">
+            <div className="flex items-center justify-between pt-4">
+                <div className="flex flex-col gap-1">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Saved in DB</h3>
+                    <div className="flex items-center gap-2">
+                        <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full font-mono">
+                            {currentProject?.settings?.enabledProviders?.length ?? 0} providers
+                        </span>
+                        <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full font-mono">
+                            {currentProject?.settings?.maxUsers?.toLocaleString() ?? 0} max users
+                        </span>
+                    </div>
+                </div>
                 <button
                     onClick={handleSave}
                     disabled={!isDirty || isPending}

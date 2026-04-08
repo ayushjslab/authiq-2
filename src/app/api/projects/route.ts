@@ -72,7 +72,7 @@ export async function PATCH(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { projectId, name, allowedOrigins, redirectUrls, enabledProviders, maxUsers, regenerateKeys } = await req.json();
+        const { projectId, name, allowedOrigins, redirectUrls, enabledProviders, maxUsers, tokenExpiryTime, regenerateKeys } = await req.json();
 
         if (!projectId) {
             return NextResponse.json({ error: "Project ID is required" }, { status: 400 });
@@ -114,6 +114,7 @@ export async function PATCH(req: Request) {
         if (name) project.name = name;
         if (allowedOrigins) project.settings.allowedOrigins = allowedOrigins;
         if (redirectUrls) project.settings.redirectUrls = redirectUrls;
+        if (tokenExpiryTime !== undefined) project.settings.tokenExpiryTime = tokenExpiryTime;
 
         if (regenerateKeys) {
             project.publicKey = `pk_${crypto.randomBytes(24).toString("hex")}`;
