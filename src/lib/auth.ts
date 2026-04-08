@@ -43,11 +43,6 @@ export const auth = betterAuth({
             clientId: process.env.DISCORD_CLIENT_ID!,
             clientSecret: process.env.DISCORD_CLIENT_SECRET!,
         },
-        microsoft: {
-            clientId: process.env.MICROSOFT_CLIENT_ID!,
-            clientSecret: process.env.MICROSOFT_CLIENT_SECRET!,
-            tenantId: process.env.MICROSOFT_TENANT_ID, // optional: defaults to 'common'
-        },
         slack: {
             clientId: process.env.SLACK_CLIENT_ID!,
             clientSecret: process.env.SLACK_CLIENT_SECRET!,
@@ -64,5 +59,22 @@ export const auth = betterAuth({
             clientId: process.env.GITLAB_CLIENT_ID!,
             clientSecret: process.env.GITLAB_CLIENT_SECRET!,
         },
+        spotify: {
+            clientId: process.env.SPOTIFY_CLIENT_ID!,
+            clientSecret: process.env.SPOTIFY_CLIENT_SECRET!,
+        },
+        reddit:{
+            clientId: process.env.REDDIT_CLIENT_ID!,
+            clientSecret: process.env.REDDIT_CLIENT_SECRET!
+        },
+        twitch:{
+            clientId: process.env.TWITCH_CLIENT_ID!,
+            clientSecret: process.env.TWITCH_CLIENT_SECRET!
+        },
+        dropbox: {
+            clientId: process.env.DROPBOX_CLIENT_ID!,
+            clientSecret: process.env.DROPBOX_CLIENT_SECRET!
+        },
+        
     },
 });

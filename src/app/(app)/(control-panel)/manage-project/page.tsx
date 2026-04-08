@@ -9,14 +9,19 @@ import { Users, Shield, Zap, Lock, Crown, Info, Check, Minus, Plus } from "lucid
 
 const PROVIDER_META: Record<SocialProvider, { label: string; logo: string; darkInvert?: boolean }> = {
     google: { label: "Google", logo: "/google.svg" },
-    microsoft: { label: "Email", logo: "/email.svg", darkInvert: true },
     facebook: { label: "Facebook", logo: "/facebook.svg" },
     github: { label: "GitHub", logo: "/github.svg", darkInvert: true },
-    linkedin: { label: "LinkedIn", logo: "/linkedin.svg" },
     twitter: { label: "X (Twitter)", logo: "/x.svg", darkInvert: true },
+    linkedin: { label: "LinkedIn", logo: "/linkedin.svg" },
     discord: { label: "Discord", logo: "/discord.svg" },
+    reddit: { label: "Reddit", logo: "/reddit.png" },
+    spotify: { label: "Spotify", logo: "/spotify.png" },
+    twitch: { label: "Twitch", logo: "/twitch.png" },
+    yahoo: { label: "Yahoo", logo: "/yahoo.png" },
+    dropbox: { label: "Dropbox", logo: "/dropbox.png" },
     slack: { label: "Slack", logo: "/slack.svg" },
     gitlab: { label: "GitLab", logo: "/gitlab.svg" },
+    stackoverflow: { label: "Stack Overflow", logo: "/stack.png" },
     notion: { label: "Notion", logo: "/notion.svg", darkInvert: true },
 };
 
