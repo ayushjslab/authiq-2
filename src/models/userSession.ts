@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IUserSession extends Document {
     webUserId: mongoose.Types.ObjectId;
     projectId: mongoose.Types.ObjectId;
-    token: string; // The session token (hashed)
+    token: string;
     expiresAt: Date;
     ipAddress?: string;
     userAgent?: string;

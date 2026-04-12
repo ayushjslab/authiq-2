@@ -115,13 +115,25 @@ export async function GET(req: Request) {
 
         const payload = JSON.stringify(userData);
 
-        // Generate HMAC-SHA256 signature
+        // Encryption Configuration
+        const algorithm = "aes-256-cbc";
+        // Create a 32-byte key from the secretKey
+        const key = crypto.createHash("sha256").update(project.secretKey).digest();
+        const iv = crypto.randomBytes(16);
+
+        // Encrypt the payload
+        const cipher = crypto.createCipheriv(algorithm, key, iv);
+        let encrypted = cipher.update(payload, "utf8", "hex");
+        encrypted += cipher.final("hex");
+
+        // Token format: iv:encryptedData
+        const token = iv.toString("hex") + ":" + encrypted;
+
+        // Still generate HMAC-SHA256 signature for extra security/verification
         const signature = crypto
             .createHmac("sha256", project.secretKey)
-            .update(payload)
+            .update(token)
             .digest("hex");
-
-        const token = Buffer.from(payload).toString("base64");
 
         const finalUrl = new URL(redirectUri);
         finalUrl.searchParams.set("token", token);
